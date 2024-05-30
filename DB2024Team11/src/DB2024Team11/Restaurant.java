@@ -7,8 +7,8 @@ import java.util.Scanner;
  * Restaurant 클래스는 레스토랑 예약을 관리하는 기능을 제공합니다.
  */
 public class Restaurant {
-    private Connection conn;
-    private Scanner scanner;
+    private final Connection conn;
+    private final Scanner scanner;
 
     /**
      * Restaurant 클래스의 생성자.
@@ -28,67 +28,35 @@ public class Restaurant {
         boolean running = true;
         while (running) {
             System.out.println("\n==== Restaurant Manager Menu ====");
-            System.out.println("1. View Reservations");
-            System.out.println("2. Add New Reservation");
-            System.out.println("3. Update Reservation");
-            System.out.println("4. Delete Reservation");
-            System.out.println("5. Back");
+            System.out.println("1. View Restaurant Information");
+            System.out.println("2. Create Restaurant Information");
+            System.out.println("3. Back");
 
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // 개행
 
             switch (choice) {
-                case 1:
-                    viewReservations();
-                    break;
-                case 2:
-                    addReservation();
-                    break;
-                case 3:
-                    updateReservation();
-                    break;
-                case 4:
-                    deleteReservation();
-                    break;
-                case 5:
-                    running = false;
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please enter a number between 1 and 5.");
+                case 1 -> getRestaurantInfo();
+                case 2 -> running = false;
+                default -> System.out.println("Invalid choice. Please enter a number between 1 and 5.");
             }
         }
     }
 
     /**
-     * 예약 정보를 조회하는 메서드.
+     * 레스토랑 정보를 조회합니다.
      */
-    private void viewReservations() {
-        // 예약 조회 로직 구현
-        System.out.println("Viewing reservations...");
+    private void getRestaurantInfo() {
+        // 여기에서 실제 예약 정보를 조회하는 SQL 쿼리와 그 결과를 처리하는 코드
+        System.out.println("Viewing restaurant information...");
     }
 
     /**
-     * 새 예약을 추가하는 메서드.
+     * 레스토랑 정보를 생성합니다.
      */
-    private void addReservation() {
-        // 새 예약 추가 로직 구현
-        System.out.println("Adding new reservation...");
-    }
-
-    /**
-     * 예약 정보를 업데이트하는 메서드.
-     */
-    private void updateReservation() {
-        // 예약 업데이트 로직 구현
-        System.out.println("Updating reservation...");
-    }
-
-    /**
-     * 예약 정보를 삭제하는 메서드.
-     */
-    private void deleteReservation() {
-        // 예약 삭제 로직 구현
-        System.out.println("Deleting reservation...");
+    private void createRestaurantInfo() {
+        // 여기에서 실제 레스토랑 정보를 생성하는 SQL 쿼리와 입력받은 데이터를 처리하는 코드
+        System.out.println("Creating restaurant information...");
     }
 }

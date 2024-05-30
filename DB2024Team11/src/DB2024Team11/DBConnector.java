@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.sql.Connection;
 /*
  * 작성자 : 박민경(2117016)
- * Script: MySQL로의 Connection을 위한 클래스.
+ * MySQL로의 Connection을 위한 클래스.
 */
 public class DBConnector {
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
@@ -23,7 +23,7 @@ public class DBConnector {
      * @throws SQLException 데이터베이스 접근 오류가 발생할 경우
      * @throws IOException I/O 오류가 발생할 경우
      */
-    public static Connection make_connection() throws SQLException, IOException {
+    public static Connection makeConnection() throws SQLException, IOException {
         if (conn != null) {
             return conn;
         }
@@ -47,7 +47,7 @@ public class DBConnector {
     /**
      * 데이터베이스 연결 종료.
      */
-    public static void close_connection() {
+    public static void closeConnection() {
         if (conn != null) {
             try {
                 conn.close();

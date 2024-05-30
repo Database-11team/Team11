@@ -10,8 +10,8 @@ import java.util.Scanner;
  * Customer 클래스는 고객의 정보를 처리하는 기능 제공.
  */
 public class Customer {
-    private Connection conn;
-    private Scanner scanner;
+    private final Connection conn;
+    private final Scanner scanner;
 
     /**
      * Customer 클래스의 생성자.
@@ -39,14 +39,9 @@ public class Customer {
             scanner.nextLine();  // 입력 버퍼 비우기
 
             switch (choice) {
-                case 1:
-                    getCustomerInfo();
-                    break;
-                case 2:
-                    running = false;
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please enter a number between 1 and 2.");
+                case 1 -> getCustomerInfo();
+                case 2 -> running = false;
+                default -> System.out.println("Invalid choice. Please enter a number between 1 and 2.");
             }
         }
     }
