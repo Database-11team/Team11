@@ -158,7 +158,7 @@ public class Order {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                System.out.print("\n====Order Info====\n");
+            	System.out.print("\n====Order Info====\n");
                 System.out.println("Order ID: " + rs.getInt("order_id"));
                 System.out.println("Reservation ID: " + rs.getInt("reservation_id"));
                 System.out.println("Menu ID: " + rs.getInt("menu_id"));
@@ -306,7 +306,7 @@ public class Order {
                 ResultSet orderRs = pstmt.executeQuery();
 
                 if (orderRs.next()) {
-                    System.out.print("\n====Order Info====\n");
+                	System.out.print("\n====Order Info====\n");
                     System.out.println("Order ID: " + orderRs.getInt("order_id"));
                     System.out.println("Reservation ID: " + orderRs.getInt("reservation_id"));
                     System.out.println("Menu ID: " + orderRs.getInt("menu_id"));
@@ -351,14 +351,15 @@ public class Order {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                System.out.print("\n====Order Info====\n");
+            	System.out.println("\n------------------------");
+            	System.out.print("\n====Order Info====\n");
                 System.out.println("Order ID: " + rs.getInt("order_id"));
                 System.out.println("Reservation ID: " + rs.getInt("reservation_id"));
                 System.out.println("Menu ID: " + rs.getInt("menu_id"));
                 System.out.println("Restaurant ID: " + rs.getInt("restaurant_id"));
                 System.out.println("Order Time: " + rs.getString("order_time"));
-                System.out.println("------------------------");
             }
+            System.out.println("\n------------------------");
 
             rs.close();
             pstmt.close();
@@ -376,9 +377,9 @@ public class Order {
         System.out.print("Enter new menu ID: ");
         int newMenuId = scanner.nextInt();
         scanner.nextLine();
-
-        System.out.print("Enter new order time (YYYY-MM-DD HH:MM:SS): ");
-        String newOrderTime = scanner.nextLine();
+        
+        // 현재 시간을 order_time으로 설정
+        String newOrderTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         try {
             String sql = "UPDATE DB2024_ORDER SET menu_id = ?, order_time = ? WHERE order_id = ?";
