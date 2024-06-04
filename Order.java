@@ -89,13 +89,13 @@ public class Order {
         System.out.print("Enter reservation ID: ");
         int reservationId = scanner.nextInt();
         scanner.nextLine();
+        
+        System.out.print("Enter restaurant ID: ");
+        int restaurantId = scanner.nextInt();
+        scanner.nextLine();
 
         System.out.print("Enter menu ID: ");
         int menuId = scanner.nextInt();
-        scanner.nextLine();
-
-        System.out.print("Enter restaurant ID: ");
-        int restaurantId = scanner.nextInt();
         scanner.nextLine();
 
         // 현재 시간을 order_time으로 설정
@@ -188,13 +188,13 @@ public class Order {
         System.out.print("Enter reservation ID: ");
         int reservationId = scanner.nextInt();
         scanner.nextLine();
+        
+        System.out.print("Enter restaurant ID: ");
+        int restaurantId = scanner.nextInt();
+        scanner.nextLine();
 
         System.out.print("Enter menu ID: ");
         int menuId = scanner.nextInt();
-        scanner.nextLine();
-
-        System.out.print("Enter restaurant ID: ");
-        int restaurantId = scanner.nextInt();
         scanner.nextLine();
 
         // 현재 시간을 order_time으로 설정
