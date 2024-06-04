@@ -158,6 +158,7 @@ public class Order {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
+                System.out.print("\n====Order Info====\n");
                 System.out.println("Order ID: " + rs.getInt("order_id"));
                 System.out.println("Reservation ID: " + rs.getInt("reservation_id"));
                 System.out.println("Menu ID: " + rs.getInt("menu_id"));
@@ -305,6 +306,7 @@ public class Order {
                 ResultSet orderRs = pstmt.executeQuery();
 
                 if (orderRs.next()) {
+                    System.out.print("\n====Order Info====\n");
                     System.out.println("Order ID: " + orderRs.getInt("order_id"));
                     System.out.println("Reservation ID: " + orderRs.getInt("reservation_id"));
                     System.out.println("Menu ID: " + orderRs.getInt("menu_id"));
@@ -349,6 +351,7 @@ public class Order {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
+                System.out.print("\n====Order Info====\n");
                 System.out.println("Order ID: " + rs.getInt("order_id"));
                 System.out.println("Reservation ID: " + rs.getInt("reservation_id"));
                 System.out.println("Menu ID: " + rs.getInt("menu_id"));
