@@ -1,3 +1,5 @@
+//역할 선택 후 테이블 접속으로 이어지도록 switch문 수정함
+
 package DB2024Team11;
 
 import java.io.IOException;
