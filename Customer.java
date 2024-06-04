@@ -13,10 +13,10 @@ public class Customer {
 	public Customer(Connection conn, Scanner scanner){
         this.conn = conn;
         this.scanner = scanner;
-    }
-   /*
-    * handleCustomerOperations 메서드는 고객 관리 메뉴를 표시하고 사용자의 선택을 처리한다.
-    */
+	}
+   	/*
+   	* handleCustomerOperations 메서드는 고객 관리 메뉴를 표시하고 사용자의 선택을 처리한다.
+    	*/
 	public void handleCustomerOperations() {
 		boolean running = true;
 		while(running) {
@@ -57,12 +57,11 @@ public class Customer {
 			case 2 -> viewBirthdays();
 			default -> System.out.println("Invalid choice. Please enter a number between 1 and 3.");
 			}
-	    }
-	    	
+		}
 	}
 	 
-   /*
-	* loginUser 메서드는 고객의 로그인 기능을 제공한다.
+   	/*
+    	* loginUser 메서드는 고객의 로그인 기능을 제공한다.
 	* 고객ID 받고 데이터베이스에서 고객 정보를 조회한다.
 	*/
 	private void loginUser() {
@@ -93,20 +92,20 @@ public class Customer {
 				case 3 -> System.out.println("Goodbye!");
 				default -> System.out.println("Invalid selection.");
 				}
-	         } else {
+			} else {
 	        	 System.out.println("Customer not found.");
-	        	 }
+			}
 
-	         rs.close();
-	         pstmt.close();
-	     } catch (SQLException e) {
-	         System.out.println("Error retrieving customer information:");
-	         e.printStackTrace();
-	     }
-	 }
-	 /*
-	  * updateUser 메서드는 고객의 전화번호를 업데이트하는 기능을 제공한다.
-	  * 새로운 전화번호를 입력받고 데이터베이스에서  해당 고객의 정보를 업데이트한다.
+			rs.close();
+	         	pstmt.close();
+		} catch (SQLException e) {
+			System.out.println("Error retrieving customer information:");
+			e.printStackTrace();
+		}
+	}
+	/*
+ 	 * updateUser 메서드는 고객의 전화번호를 업데이트하는 기능을 제공한다.
+	 * 새로운 전화번호를 입력받고 데이터베이스에서  해당 고객의 정보를 업데이트한다.
 	 */
 	 private void updateUser(int customerId) {
 	        System.out.print("Enter new phone number: ");
@@ -146,8 +145,8 @@ public class Customer {
 	         }
 	         pstmt.close();
 	     } catch (SQLException e) {
-          System.out.println("Error deleting customer information:");
-	         e.printStackTrace();
+		     System.out.println("Error deleting customer information:");
+		     e.printStackTrace();
 	     }
 	 }
 	 /*
@@ -187,11 +186,11 @@ public class Customer {
 	         } else {
 	        	 System.out.println("Failed to sign up.");
 	         }
-	         pstmt.close();
-	      }catch (SQLException e) {
-	    	  System.out.println("Error signing up customer:");
-	    	  e.printStackTrace();
-	      }	
+		     pstmt.close();
+	     }catch (SQLException e) {
+		     System.out.println("Error signing up customer:");
+		     e.printStackTrace();
+	     }
 	 }
 	    
 	 /*
@@ -235,14 +234,12 @@ public class Customer {
 				 System.out.println("Phone: " + rs.getString("phone_number"));
 				 // Logic to send coupon
 				 System.out.println("Coupon sent to " + rs.getString("phone_number"));
-	         }
+			 }
 			 rs.close();
 			 pstmt.close();
-	     } catch (SQLException e) {
-	    	 System.out.println("Error retrieving birthday information:");
-	    	 e.printStackTrace();
-	        }
+		 } catch (SQLException e) {
+			 System.out.println("Error retrieving birthday information:");
+			 e.printStackTrace();
+		 }
 	 }
-	    
-
 }
