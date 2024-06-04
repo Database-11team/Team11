@@ -1,6 +1,7 @@
 //TestMain.java 활용해서 실행함
 //각 함수들 관리자용/고객용 구분 완료
 //인덱스 활용예제 포함 완료
+//DB2024_Order 테이블에서 order_id가 자동으로 증가하도록 AUTO_INCREMENT로 테이블 생성 코드 수정해야함
 
 package DB2024Team11;
 
