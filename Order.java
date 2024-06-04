@@ -28,18 +28,7 @@ public class Order {
     }
 
     /**
-     * 사용자 주문 생성 처리
-     */
-    public void userOrderCreation() {
-        System.out.print("Enter reservation ID: ");
-        int reservationId = scanner.nextInt();
-        scanner.nextLine(); // 개행
-
-        createOrder(reservationId);
-    }
-
-    /**
-     * 관리자 주문 생성 처리
+     * 주문 생성 처리
      */
     public void adminOrderCreation() {
         System.out.print("Enter reservation ID: ");
