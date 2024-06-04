@@ -85,7 +85,7 @@ public class Main {
                             System.out.println("3. Menu");
                             System.out.println("4. Order");
                             System.out.println("5. Reservation");
-                            System.out.println("6. Payment & Receipt");
+                            System.out.println("6. Receipt");
                             System.out.print("Enter your choice: ");
                             int table = scanner.nextInt();
                             scanner.nextLine();
