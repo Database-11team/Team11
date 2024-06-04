@@ -85,6 +85,7 @@ public class Order {
      * 관리자용 주문 생성
      */
     private void adminOrderCreation() {
+    	System.out.print("\n====Admin Order Creation====\n");
         System.out.print("Enter reservation ID: ");
         int reservationId = scanner.nextInt();
         scanner.nextLine();
@@ -120,10 +121,12 @@ public class Order {
      * 관리자용 주문 수정/삭제
      */
     private void adminOrderModifyOrDelete() {
+    	System.out.print("\n====Admin Order Modify or Delete====\n");
         System.out.print("Enter order ID: ");
         int orderId = scanner.nextInt();
         scanner.nextLine();
 
+        System.out.print("\n====Select Option====\n");
         System.out.println("1. Modify Order");
         System.out.println("2. Delete Order");
         System.out.print("Enter your choice: ");
@@ -143,6 +146,7 @@ public class Order {
      * 관리자용 주문 확인
      */
     private void adminOrderConfirmation() {
+    	System.out.print("\n====Admin Order Confirmation====\n");
         System.out.print("Enter order ID: ");
         int orderId = scanner.nextInt();
         scanner.nextLine();
@@ -175,6 +179,7 @@ public class Order {
      * 고객용 주문 생성
      */
     private void customerOrderCreation() {
+    	System.out.print("\n====Customer Order Creation====\n");
         System.out.print("Enter your customer ID: ");
         int customerId = scanner.nextInt();
         scanner.nextLine();
@@ -228,6 +233,7 @@ public class Order {
      * 고객용 주문 수정/삭제 요청
      */
     private void customerOrderModifyOrDelete() {
+    	System.out.print("\n====Customer Order Modify or Delete====\n");
         System.out.print("Enter your customer ID: ");
         int customerId = scanner.nextInt();
         scanner.nextLine();
@@ -245,6 +251,7 @@ public class Order {
             ResultSet rs = verifyPstmt.executeQuery();
 
             if (rs.next()) {
+            	System.out.print("\n====Select Option====\n");
                 System.out.println("1. Modify Order");
                 System.out.println("2. Delete Order");
                 System.out.print("Enter your choice: ");
@@ -274,6 +281,7 @@ public class Order {
      * 고객용 주문 확인
      */
     private void customerOrderConfirmation() {
+    	System.out.print("\n====Customer Order Confirmation====\n");
         System.out.print("Enter your customer ID: ");
         int customerId = scanner.nextInt();
         scanner.nextLine();
@@ -324,6 +332,7 @@ public class Order {
      * 특정 식당과 예약번호로 주문 검색 (인덱스 활용)
      */
     private void searchOrdersByRestaurantAndReservation() {
+    	System.out.print("\n====Search Using Index====\n");
         System.out.print("Enter restaurant ID: ");
         int restaurantId = scanner.nextInt();
         scanner.nextLine();
@@ -360,6 +369,7 @@ public class Order {
      * 주문 수정
      */
     private void modifyOrder(int orderId) {
+    	System.out.print("\n====Order Modification====\n");
         System.out.print("Enter new menu ID: ");
         int newMenuId = scanner.nextInt();
         scanner.nextLine();
