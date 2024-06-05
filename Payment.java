@@ -28,7 +28,7 @@ public class Payment {
     /**
      * 결제 처리 매뉴얼을 표시하고 사용자의 선택에 따라 작업 처리
      */
-    public void handleCusomerOperations() {
+    public void handleCustomerOperations() {
         boolean running = true;
         while (running) {
             System.out.println("\n==== Payment Management ====");
