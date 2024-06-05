@@ -26,23 +26,11 @@ public class Reservation {
         this.scanner = scanner;
     }
 
-    /*
-     * @param role 사용자의 역할 (고객 또는 관리자)
-     */
-    public void handleOperations(String role) {
-        if (role.equalsIgnoreCase("customer")) {
-            handleCustomerReservation();
-        } else if (role.equalsIgnoreCase("manager")) {
-            handleAdminReservation();
-        } else {
-            System.out.println("Invalid role. Please specify either 'customer' or 'manager'.");
-        }
-    }
 
     /**
      * 고객의 예약 관련 기능 선택
      */
-    private void handleCustomerReservation() {
+    void handleCustomerOperations() {
         System.out.println("\n==== Customer Reservation Menu ====");
         System.out.println("1. Create Reservation");
         System.out.println("2. Update Reservation");
@@ -65,7 +53,7 @@ public class Reservation {
     /**
      * 관리자의 예약 관련 기능 선택
      */
-    private void handleAdminReservation() {
+    void handleAdminOperations() {
         System.out.println("\n==== Manager Reservation Menu ====");
         System.out.println("1. Create Reservation");
         System.out.println("2. Update Reservation");
@@ -92,6 +80,7 @@ public class Reservation {
 	*/
 	private void createReservation() {
 		try {
+			System.out.println();
 			//사용자 ID 입력
 		    System.out.print("Enter customer ID: ");
 		    int customerId=scanner.nextInt();
@@ -118,7 +107,7 @@ public class Reservation {
 		    int confirmed=0;
 		
 		    // 예약 신청
-		    String sql = "INSERT INTO Reservation (CustomerID, RestaurantID, ReservationDate, ReservationTime, NumberOfGuests, ReservationConfirmed) VALUES (?, ?, ?, ?, ?, ?)";
+		    String sql = "INSERT INTO DB2024_RESERVATION (customer_id, restaurant_id, reservation_date, reservation_time, reservation_guests, reservation_confirmed) VALUES (?, ?, ?, ?, ?, ?)";
 		    PreparedStatement pstmt = conn.prepareStatement(sql);
 		    pstmt.setInt(1, customerId );
 		    pstmt.setInt(2, restaurantId);
@@ -145,21 +134,22 @@ public class Reservation {
 	 */
 	private void updateReservation() {
         try {
+    		System.out.println();
         	//예약 ID 입력받기 
             System.out.print("Enter reservation ID to update: ");
             int reservationId = scanner.nextInt();
             scanner.nextLine();
 
             //현재 예약 정보 가져오기
-            String querySql = "SELECT * FROM Reservation WHERE ReservationID = ?";
+            String querySql = "SELECT * FROM DB2024_RESERVATION WHERE reservation_id = ?";
             PreparedStatement queryStmt = conn.prepareStatement(querySql);
             queryStmt.setInt(1, reservationId);
             ResultSet rs = queryStmt.executeQuery();
 
             if (rs.next()) {
-                String currentDate = rs.getString("ReservationDate");
-                String currentTime = rs.getString("ReservationTime");
-                int currentGuests = rs.getInt("NumberOfGuests");
+                String currentDate = rs.getString("reservation_date");
+                String currentTime = rs.getString("reservation_time");
+                int currentGuests = rs.getInt("reservation_guests");
 
                 System.out.println("Current Reservation Information:");
                 System.out.println("Date: " + currentDate);
@@ -184,7 +174,7 @@ public class Reservation {
                 int newGuests = newGuestsInput.isEmpty() ? currentGuests : Integer.parseInt(newGuestsInput);
 
                 //예약 정보 업데이트 
-                String updateSql = "UPDATE Reservation SET ReservationDate = ?, ReservationTime = ?, NumberOfGuests = ?, ReservationConfirmed = 0 WHERE ReservationID = ?";
+                String updateSql = "UPDATE DB2024_RESERVATION SET reservation_date = ?, reservation_time = ?, reservation_guests = ?, reservation_confirmed = 0 WHERE reservation_id = ?";
                 PreparedStatement updateStmt = conn.prepareStatement(updateSql);
                 updateStmt.setString(1, newDate);
                 updateStmt.setString(2, newTime);
@@ -216,13 +206,14 @@ public class Reservation {
      */
     private void cancelReservation() {
 	    try {
+			System.out.println();
 	    	//예약 ID 입력받기 
 	        System.out.print("Enter reservation ID to cancel: ");
 	        int reservationId = scanner.nextInt();
 	        scanner.nextLine();  // Clear input buffer
 	
 	        //예약 삭제하기 
-	        String sql = "DELETE FROM Reservations WHERE id = ?";
+	        String sql = "DELETE FROM DB2024_RESERVATION WHERE reservation_id = ?";
 	        PreparedStatement pstmt = conn.prepareStatement(sql);
 	        pstmt.setInt(1, reservationId);
 	
@@ -249,19 +240,20 @@ public class Reservation {
             int reservationId = scanner.nextInt();
             scanner.nextLine();
 
-            String sql = "SELECT * FROM Reservation WHERE ReservationID = ?";
+            String sql = "SELECT * FROM DB2024_RESERVATION WHERE reservation_id = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, reservationId);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                int customerId = rs.getInt("CustomerID");
-                int restaurantId = rs.getInt("RestaurantID");
-                String date = rs.getString("ReservationDate");
-                String time = rs.getString("ReservationTime");
-                int guests = rs.getInt("NumberOfGuests");
-                boolean confirmed = rs.getBoolean("ReservationConfirmed");
+                int customerId = rs.getInt("customer_id");
+                int restaurantId = rs.getInt("restaurant_id");
+                String date = rs.getString("reservation_date");
+                String time = rs.getString("reservation_time");
+                int guests = rs.getInt("reservation_guests");
+                boolean confirmed = rs.getBoolean("reservation_confirmed");
 
+        		System.out.println();
                 System.out.println("Reservation Details:");
                 System.out.println("Customer ID: " + customerId);
                 System.out.println("Restaurant ID: " + restaurantId);
@@ -286,6 +278,7 @@ public class Reservation {
      */
     private void confirmReservation() {
     try {
+    	System.out.println();
         // 사용자로부터 예약 ID 입력 받기
         System.out.print("Enter reservation ID: ");
         int reservationId = scanner.nextInt();
@@ -296,13 +289,13 @@ public class Reservation {
         String choice = scanner.nextLine();
 
         // 예약 상태 업데이트
-        String sql = "UPDATE Reservation SET reservation_confirmed = ? WHERE reservation_id = ?";
+        String sql = "UPDATE DB2024_RESERVATION SET reservation_confirmed = ? WHERE reservation_id = ?";
         PreparedStatement pstmt = conn.prepareStatement(sql);
 
         if (choice.equalsIgnoreCase("C")) {
-            pstmt.setString(1, "Confirmed");
+            pstmt.setInt(1, 1);
         } else if (choice.equalsIgnoreCase("R")) {
-            pstmt.setString(1, "Rejected");
+            pstmt.setInt(1, 0);
         } else {
             System.out.println("Invalid choice. Please enter 'C' for Confirm or 'R' for Reject.");
             pstmt.close();
