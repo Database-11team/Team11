@@ -6,8 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-import com.mysql.cj.jdbc.result.ResultSetMetaData;
-
 /**
  * Payment 클래스는 결제를 처리하는 기능 제공.
  */
@@ -124,7 +122,7 @@ public class Payment {
      * [관리자] 결제번호를 입력받아 데이터베이스에서 영수증 조회.
      */
     private void res_getReceipt() {
-        System.out.print("\nEnter payment ID: ");
+        System.out.print("Enter payment ID: ");
         int payment_id = scanner.nextInt();
         scanner.nextLine();	//버퍼 지우기
 
@@ -327,7 +325,7 @@ public class Payment {
         		PreparedStatement pstmt = conn.prepareStatement(sql);
         		ResultSet rs = pstmt.executeQuery();
         		
-        		System.out.println("payment_id  reservation_id\tpayment_date\tpayment_type\t  payment_amount\tcash_receipt_requested");
+        		System.out.println("\npayment_id  reservation_id\tpayment_date\tpayment_type\t  payment_amount\tcash_receipt_requested");
         		System.out.println("--------------------------------------------------------------------------------------------------------------");
         		while(rs.next()) {
         			System.out.print("   " + rs.getInt("payment_id") + "\t\t" + rs.getInt("reservation_id") + "\t\t " + rs.getDate("payment_date") + "\t  " + rs.getString("payment_type") + "\t\t\t" + rs.getInt("payment_amount") + "\t\t\t");
