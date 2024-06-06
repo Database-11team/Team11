@@ -85,7 +85,7 @@ public class Order {
      * 관리자용 주문 생성
      */
     private void adminOrderCreation() {
-    	System.out.print("\n====Admin Order Creation====\n");
+        System.out.print("\n====Admin Order Creation====\n");
         System.out.print("Enter reservation ID: ");
         int reservationId = scanner.nextInt();
         scanner.nextLine();
@@ -121,7 +121,7 @@ public class Order {
      * 관리자용 주문 수정/삭제
      */
     private void adminOrderModifyOrDelete() {
-    	System.out.print("\n====Admin Order Modify or Delete====\n");
+        System.out.print("\n====Admin Order Modify or Delete====\n");
         System.out.print("Enter order ID: ");
         int orderId = scanner.nextInt();
         scanner.nextLine();
@@ -146,7 +146,7 @@ public class Order {
      * 관리자용 주문 확인
      */
     private void adminOrderConfirmation() {
-    	System.out.print("\n====Admin Order Confirmation====\n");
+        System.out.print("\n====Admin Order Confirmation====\n");
         System.out.print("Enter order ID: ");
         int orderId = scanner.nextInt();
         scanner.nextLine();
@@ -158,7 +158,7 @@ public class Order {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-            	System.out.print("\n====Order Info====\n");
+                System.out.print("\n====Order Info====\n");
                 System.out.println("Order ID: " + rs.getInt("order_id"));
                 System.out.println("Reservation ID: " + rs.getInt("reservation_id"));
                 System.out.println("Menu ID: " + rs.getInt("menu_id"));
@@ -180,7 +180,7 @@ public class Order {
      * 고객용 주문 생성
      */
     private void customerOrderCreation() {
-    	System.out.print("\n====Customer Order Creation====\n");
+        System.out.print("\n====Customer Order Creation====\n");
         System.out.print("Enter your customer ID: ");
         int customerId = scanner.nextInt();
         scanner.nextLine();
@@ -234,7 +234,7 @@ public class Order {
      * 고객용 주문 수정/삭제 요청
      */
     private void customerOrderModifyOrDelete() {
-    	System.out.print("\n====Customer Order Modify or Delete====\n");
+        System.out.print("\n====Customer Order Modify or Delete====\n");
         System.out.print("Enter your customer ID: ");
         int customerId = scanner.nextInt();
         scanner.nextLine();
@@ -252,7 +252,7 @@ public class Order {
             ResultSet rs = verifyPstmt.executeQuery();
 
             if (rs.next()) {
-            	System.out.print("\n====Select Option====\n");
+                System.out.print("\n====Select Option====\n");
                 System.out.println("1. Modify Order");
                 System.out.println("2. Delete Order");
                 System.out.print("Enter your choice: ");
@@ -282,48 +282,34 @@ public class Order {
      * 고객용 주문 확인
      */
     private void customerOrderConfirmation() {
-    	System.out.print("\n====Customer Order Confirmation====\n");
+        System.out.print("\n====Customer Order Confirmation====\n");
         System.out.print("Enter your customer ID: ");
         int customerId = scanner.nextInt();
         scanner.nextLine();
 
-        System.out.print("Enter order ID: ");
-        int orderId = scanner.nextInt();
+        System.out.print("Enter restaurant ID: ");
+        int restaurantId = scanner.nextInt();
         scanner.nextLine();
 
         try {
-            // Verify if the order belongs to the customer
-            String verifySql = "SELECT o.order_id FROM DB2024_ORDER o JOIN DB2024_RESERVATION r ON o.reservation_id = r.reservation_id WHERE o.order_id = ? AND r.customer_id = ?";
-            PreparedStatement verifyPstmt = conn.prepareStatement(verifySql);
-            verifyPstmt.setInt(1, orderId);
-            verifyPstmt.setInt(2, customerId);
-            ResultSet rs = verifyPstmt.executeQuery();
+            String sql = "SELECT o.* FROM DB2024_ORDER o JOIN DB2024_RESERVATION r ON o.reservation_id = r.reservation_id WHERE r.customer_id = ? AND o.restaurant_id = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, customerId);
+            pstmt.setInt(2, restaurantId);
+            ResultSet rs = pstmt.executeQuery();
 
-            if (rs.next()) {
-                String sql = "SELECT * FROM DB2024_ORDER WHERE order_id = ?";
-                PreparedStatement pstmt = conn.prepareStatement(sql);
-                pstmt.setInt(1, orderId);
-                ResultSet orderRs = pstmt.executeQuery();
-
-                if (orderRs.next()) {
-                	System.out.print("\n====Order Info====\n");
-                    System.out.println("Order ID: " + orderRs.getInt("order_id"));
-                    System.out.println("Reservation ID: " + orderRs.getInt("reservation_id"));
-                    System.out.println("Menu ID: " + orderRs.getInt("menu_id"));
-                    System.out.println("Restaurant ID: " + orderRs.getInt("restaurant_id"));
-                    System.out.println("Order Time: " + orderRs.getString("order_time"));
-                } else {
-                    System.out.println("Order not found.");
-                }
-
-                orderRs.close();
-                pstmt.close();
-            } else {
-                System.out.println("Order ID does not belong to the customer.");
+            System.out.print("\n====Order List====\n");
+            while (rs.next()) {
+                System.out.println("Order ID: " + rs.getInt("order_id"));
+                System.out.println("Reservation ID: " + rs.getInt("reservation_id"));
+                System.out.println("Menu ID: " + rs.getInt("menu_id"));
+                System.out.println("Restaurant ID: " + rs.getInt("restaurant_id"));
+                System.out.println("Order Time: " + rs.getString("order_time"));
+                System.out.println("------------------------");
             }
 
             rs.close();
-            verifyPstmt.close();
+            pstmt.close();
         } catch (SQLException e) {
             System.out.println("Error confirming order:");
             e.printStackTrace();
@@ -334,7 +320,7 @@ public class Order {
      * 특정 식당과 예약번호로 주문 검색 (인덱스 활용)
      */
     private void searchOrdersByRestaurantAndReservation() {
-    	System.out.print("\n====Search Using Index====\n");
+        System.out.print("\n====Search Using Index====\n");
         System.out.print("Enter restaurant ID: ");
         int restaurantId = scanner.nextInt();
         scanner.nextLine();
@@ -351,8 +337,8 @@ public class Order {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-            	System.out.println("\n------------------------");
-            	System.out.print("\n====Order Info====\n");
+                System.out.println("\n------------------------");
+                System.out.print("\n====Order Info====\n");
                 System.out.println("Order ID: " + rs.getInt("order_id"));
                 System.out.println("Reservation ID: " + rs.getInt("reservation_id"));
                 System.out.println("Menu ID: " + rs.getInt("menu_id"));
@@ -373,7 +359,7 @@ public class Order {
      * 주문 수정
      */
     private void modifyOrder(int orderId) {
-    	System.out.print("\n====Order Modification====\n");
+        System.out.print("\n====Order Modification====\n");
         System.out.print("Enter new menu ID: ");
         int newMenuId = scanner.nextInt();
         scanner.nextLine();
