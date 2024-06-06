@@ -8,7 +8,7 @@ import java.util.Scanner;
  */
 public class Customer {
 	private final Connection conn;
-	private Scanner scanner;
+	private final Scanner scanner;
 	
 	public Customer(Connection conn, Scanner scanner){
         this.conn = conn;
@@ -54,12 +54,11 @@ public class Customer {
 
 			switch (choice) {
 			case 1 -> manageCustomers();
-			case 2 -> searchCustomerBirthdayByPhone();
+			case 2 -> searchCustomerByPhoneNumber();
 			default -> System.out.println("Invalid choice. Please enter a number between 1 and 3.");
 			}
 		}
 	}
-	 
    	/*
     	* loginUser 메서드는 고객의 로그인 기능을 제공한다.
 	* 고객ID 받고 데이터베이스에서 고객 정보를 조회한다.
@@ -230,7 +229,7 @@ public class Customer {
 		    System.out.print("Enter Customer Phone Number (xxx-xxxx-xxxx): ");
 		    String phone_number = scanner.nextLine(); // Read input as a string
 
-		    try {
+		    try { 
 		        String sql = "SELECT * FROM DB2024_CUSTOMER WHERE phone_number = ?";
 		        PreparedStatement pstmt = conn.prepareStatement(sql);
 		        pstmt.setString(1, phone_number); // Use setString to handle string input
@@ -253,5 +252,6 @@ public class Customer {
 		        System.out.println("Error searching customer phone number:");
 		        e.printStackTrace();
 		    }
-		} 
+		}
+
 }
