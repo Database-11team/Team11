@@ -224,43 +224,6 @@ public class Customer {
 	 }
 	/*
      	* 고객을 전화번호로 검색 (Index 활용)
-     	*/
-	/*
-     * 고객을 전화번호로 검색 (Index 활용)
-     */
-	 private void searchCustomerByPhoneNumber() {
-		    System.out.print("\n----Search Using Index----\n");
-		    System.out.print("Enter Customer Phone Number (xxx-xxxx-xxxx): ");
-		    String phone_number = scanner.nextLine(); // Read input as a string
-
-		    try {
-		        String sql = "SELECT * FROM DB2024_CUSTOMER WHERE phone_number = ?";
-		        PreparedStatement pstmt = conn.prepareStatement(sql);
-		        pstmt.setString(1, phone_number); // Use setString to handle string input
-		        ResultSet rs = pstmt.executeQuery();
-		        
-		        if (rs.next()) {
-		            System.out.print("\n—--—Customer Info----\n");
-		            System.out.println("Customer ID: " + rs.getInt("customer_id"));
-		            System.out.println("Customer Name: " + rs.getString("customer_name"));
-		            System.out.println("Customer Birthday: " + rs.getDate("birthday"));
-		            System.out.println("Customer Phone Number: " + rs.getString("phone_number"));
-		        } else {
-		            System.out.println("No customer found with the given phone number.");
-		        }
-		        System.out.println("\n------------------------");
-
-		        rs.close();
-		        pstmt.close();
-		    } catch (SQLException e) {
-		        System.out.println("Error searching customer phone number:");
-		        e.printStackTrace();
-		    }
-		}
-
-}   
-	/*
-     	* 고객을 전화번호로 검색 (Index 활용)
     	*/
 	 private void searchCustomerByPhoneNumber() {
 		    System.out.print("\n----Search Using Index----\n");
