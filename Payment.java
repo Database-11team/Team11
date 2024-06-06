@@ -116,6 +116,31 @@ public class Payment {
         } else {
             System.out.println("No payment found for the given details.");
         }
+        
+        if(checkBirthday(customerName, phoneNumber)) {
+        	System.out.println("\n**** Happy Birthday! ****");
+        	System.out.println("If you bring this receipt on your next visit, you'll get a 10% discount!\n\n");
+        }
+        
+    }
+    /**
+     * --> 해당 고객을 birthdy_coupon 뷰에서 찾
+     */
+    private boolean checkBirthday(String customer_name, String phone_number) {
+    	boolean res = false;
+    	try {
+    		String sql = "SELECT * FROM birthday_coupon WHERE customer_name = ? AND phone_number = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, customer_name);
+            pstmt.setString(2, phone_number);
+            ResultSet rs = pstmt.executeQuery();
+            
+            if(rs.next())	res = true;
+    	} catch(SQLException e) {
+    		System.out.println("Error finding birthday_coupon view:");
+            e.printStackTrace();
+    	}
+    	return res;
     }
     
     /**
