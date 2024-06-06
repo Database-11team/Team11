@@ -209,7 +209,7 @@ public class Order {
         scanner.nextLine();
 
         try {
-            String sql = "SELECT * FROM DB2024_ORDER WHERE order_id = ?";
+            String sql = "SELECT * FROM DB2024_ORDER o JOIN DB2024_MENU m ON o.menu_id = m.menu_id WHERE order_id = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, orderId);
             ResultSet rs = pstmt.executeQuery();
@@ -403,7 +403,7 @@ public class Order {
         scanner.nextLine();
 
         try {
-            String sql = "SELECT o.* FROM DB2024_ORDER o JOIN DB2024_RESERVATION r ON o.reservation_id = r.reservation_id JOIN DB2024_CUSTOMER c ON r.customer_id = c.customer_id WHERE c.customer_name = ? AND o.restaurant_id = ?";
+            String sql = "SELECT o.* FROM DB2024_ORDER o JOIN DB2024_RESERVATION r ON o.reservation_id = r.reservation_id JOIN DB2024_CUSTOMER c ON r.customer_id = c.customer_id JOIN DB2024_MENU m ON o.menu_id = m.menu_id WHERE c.customer_name = ? AND o.restaurant_id = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, customerName);
             pstmt.setInt(2, restaurantId);
@@ -415,6 +415,7 @@ public class Order {
                 System.out.println("Reservation ID: " + rs.getInt("reservation_id"));
                 System.out.println("Order ID: " + rs.getInt("order_id"));
                 System.out.println("Menu ID: " + rs.getInt("menu_id"));
+                System.out.println("Menu Name: " + rs.getString("menu_name"));
                 System.out.println("Order Time: " + rs.getString("order_time"));
                 System.out.println("------------------------");
             }
