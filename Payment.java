@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 /**
@@ -68,6 +70,7 @@ public class Payment {
                 case 5 -> changePayment();
                 case 6 -> res_getReceipt();
                 case 7 -> running = false;
+                case 8 -> getAlllPayment();
                 default -> System.out.println("Invalid choice. Please enter a number between 1 and 6.");
             }
         }
@@ -210,9 +213,6 @@ public class Payment {
 	        int reservationId = scanner.nextInt();
 	        scanner.nextLine();
 	
-	        System.out.print("Enter payment date (YYYY-MM-DD): ");
-	        String paymentDate = scanner.nextLine();
-	
 	        System.out.print("Enter payment type: ");
 	        String paymentType = scanner.nextLine();
 	
@@ -224,6 +224,7 @@ public class Payment {
 	        int cash_receipt_requested = scanner.nextInt();
 	        scanner.nextLine();
 	        
+	        String paymentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 	        String sql = "INSERT INTO DB2024_PAYMENT (reservation_id, payment_date, payment_type, payment_amount, cash_receipt_requested) VALUES (?, ?, ?, ?, ?)";
 	        PreparedStatement pstmt = conn.prepareStatement(sql);
 	        pstmt.setInt(1, reservationId);
@@ -340,7 +341,7 @@ public class Payment {
         else
         	System.out.println("Return to the initial screen\n");
     }
-
+   
     /**
      * [관리자] 식당 ID를 입력 받아 해당 식당의 모든 결제정보 출력
      */
@@ -370,6 +371,26 @@ public class Payment {
             e.printStackTrace();
     		}	
     }
+    private void getAlllPayment() {
+		try {
+    		String sql = "SELECT * FROM DB2024_PAYMENT P "
+    				   + "JOIN DB2024_RESERVATION RV ON P.reservation_id = RV.reservation_id "
+    			   	   + "JOIN DB2024_RESTAURANT RT ON RV.restaurant_id = RT.restaurant_id ";
+    		PreparedStatement pstmt = conn.prepareStatement(sql);
+    		ResultSet rs = pstmt.executeQuery();
+    		
+    		System.out.println("\npayment_id  reservation_id\tpayment_date\tpayment_type\t  payment_amount\tcash_receipt_requested");
+    		System.out.println("--------------------------------------------------------------------------------------------------------------");
+    		while(rs.next()) {
+    			System.out.print("   " + rs.getInt("payment_id") + "\t\t" + rs.getInt("reservation_id") + "\t\t " + rs.getDate("payment_date") + "\t  " + rs.getString("payment_type") + "\t\t\t" + rs.getInt("payment_amount") + "\t\t\t");
+    			if(rs.getInt("cash_receipt_requested") == 1)	System.out.println("O");
+	            else											System.out.println("X");
+    		}
+		} catch(SQLException e) {
+			System.out.println("Error loading payment information:");
+        e.printStackTrace();
+		}	
+}
     
     /**
      * 결제 ID를 이용해 결제 정보 출력
