@@ -253,5 +253,5 @@ public class Customer {
 		        System.out.println("Error searching customer phone number:");
 		        e.printStackTrace();
 		    }
-		}
+		} 
 }
