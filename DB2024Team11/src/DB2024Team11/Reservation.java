@@ -35,7 +35,8 @@ public class Reservation {
         System.out.println("1. Create Reservation");
         System.out.println("2. Update Reservation");
         System.out.println("3. Cancel Reservation");
-        System.out.println("4. View Reservation");
+        System.out.println("4. Reservation Detail");
+        System.out.println("5. View Reservation");
 
         System.out.print("Enter your choice: ");
         int choice = scanner.nextInt();
@@ -45,7 +46,8 @@ public class Reservation {
             case 1 -> createReservation();
             case 2 -> updateReservation();
             case 3 -> cancelReservation();
-            case 4 -> viewReservation();
+            case 4 -> detailReservation();
+            case 5 -> viewCustomerReservations();
             default -> System.out.println("Invalid choice. Please enter a number between 1 and 4.");
         }
     }
@@ -58,8 +60,9 @@ public class Reservation {
         System.out.println("1. Create Reservation");
         System.out.println("2. Update Reservation");
         System.out.println("3. Cancel Reservation");
-        System.out.println("4. View Reservation");
-        System.out.println("5. Confirm Reservation");
+        System.out.println("4. Reservation Detail");
+        System.out.println("5. View Reservation");
+        System.out.println("6. Confirm Reservation");
 
         System.out.print("Enter your choice: ");
         int choice = scanner.nextInt();
@@ -69,8 +72,9 @@ public class Reservation {
             case 1 -> createReservation();
             case 2 -> updateReservation();
             case 3 -> cancelReservation();
-            case 4 -> viewReservation();
-            case 5 -> confirmReservation();
+            case 4 -> detailReservation();
+            case 5 -> viewRestaurantReservations();
+            case 6 -> confirmReservation();
             default -> System.out.println("Invalid choice. Please enter a number between 1 and 5.");
         }
     }
@@ -234,7 +238,7 @@ public class Reservation {
     /**
      * 예약 조회 기능
      */
-    private void viewReservation() {
+    private void detailReservation() {
         try {
             System.out.print("Enter reservation ID to view: ");
             int reservationId = scanner.nextInt();
@@ -269,6 +273,84 @@ public class Reservation {
             pstmt.close();
         } catch (SQLException e) {
             System.out.println("Error viewing reservation:");
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * 특정 고객의 모든 예약 조회 기능
+     */
+    private void viewCustomerReservations() {
+        try {
+            System.out.print("Enter customer ID to view all reservations: ");
+            int customerId = scanner.nextInt();
+            scanner.nextLine();
+
+            String sql = "SELECT * FROM DB2024_RESERVATION WHERE customer_id = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, customerId);
+            ResultSet rs = pstmt.executeQuery();
+
+            System.out.println("\nReservations for Customer ID: " + customerId);
+            while (rs.next()) {
+                int reservationId = rs.getInt("reservation_id");
+                int restaurantId = rs.getInt("restaurant_id");
+                String date = rs.getString("reservation_date");
+                String time = rs.getString("reservation_time");
+                int guests = rs.getInt("reservation_guests");
+                boolean confirmed = rs.getBoolean("reservation_confirmed");
+
+                System.out.println("\nReservation ID: " + reservationId);
+                System.out.println("Restaurant ID: " + restaurantId);
+                System.out.println("Date: " + date);
+                System.out.println("Time: " + time);
+                System.out.println("Number of Guests: " + guests);
+                System.out.println("Confirmed: " + (confirmed ? "Yes" : "No"));
+            }
+
+            rs.close();
+            pstmt.close();
+        } catch (SQLException e) {
+            System.out.println("Error viewing all reservations for customer:");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 특정 레스토랑의 모든 예약 조회 기능
+     */
+    private void viewRestaurantReservations() {
+        try {
+            System.out.print("Enter restaurant ID to view all reservations: ");
+            int restaurantId = scanner.nextInt();
+            scanner.nextLine();
+
+            String sql = "SELECT * FROM DB2024_RESERVATION WHERE restaurant_id = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, restaurantId);
+            ResultSet rs = pstmt.executeQuery();
+
+            System.out.println("\nReservations for Restaurant ID: " + restaurantId);
+            while (rs.next()) {
+                int reservationId = rs.getInt("reservation_id");
+                int customerId = rs.getInt("customer_id");
+                String date = rs.getString("reservation_date");
+                String time = rs.getString("reservation_time");
+                int guests = rs.getInt("reservation_guests");
+                boolean confirmed = rs.getBoolean("reservation_confirmed");
+
+                System.out.println("\nReservation ID: " + reservationId);
+                System.out.println("Customer ID: " + customerId);
+                System.out.println("Date: " + date);
+                System.out.println("Time: " + time);
+                System.out.println("Number of Guests: " + guests);
+                System.out.println("Confirmed: " + (confirmed ? "Yes" : "No"));
+            }
+
+            rs.close();
+            pstmt.close();
+        } catch (SQLException e) {
+            System.out.println("Error viewing all reservations for restaurant:");
             e.printStackTrace();
         }
     }
