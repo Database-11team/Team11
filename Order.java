@@ -31,19 +31,19 @@ public class Order {
     }
     
     /**
-     * 주문 메뉴를 표시하고 사용자의 선택에 따라 작업 처리
+     * 주문 메뉴를 표시하고 사용자의 선택에 따라 작업 처리 (매개변수를 갖는 동적 쿼리 - 입력 받기)
      */
     public void handleAdminOperations() {
         boolean running = true;
         while (running) {
-            System.out.println("\n==== Admin Order Menu ====");
+            System.out.println("\n====[Admin Order Menu]====");
             System.out.println("1. Create New Order");
             System.out.println("2. Modify/Delete Order");
             System.out.println("3. Order Confirmation");
             System.out.println("4. Search Orders by Restaurant and Reservation ID");
             System.out.println("5. Exit");
             System.out.print("Enter your choice: ");
-            int choice = scanner.nextInt();
+            int choice = scanner.nextInt(); // 입력 받기
             scanner.nextLine();  // 입력 버퍼 비우기
 
             switch (choice) {
@@ -60,14 +60,14 @@ public class Order {
     public void handleCustomerOperations() {
         boolean running = true;
         while (running) {
-            System.out.println("\n==== Customer Order Menu ====");
+            System.out.println("\n====[Customer Order Menu]====");
             System.out.println("1. Create New Order");
             System.out.println("2. Request Order Modification/Deletion");
             System.out.println("3. Order Confirmation");
             System.out.println("4. Search Orders by Restaurant and Reservation ID");
             System.out.println("5. Exit");
             System.out.print("Enter your choice: ");
-            int choice = scanner.nextInt();
+            int choice = scanner.nextInt(); // 입력 받기
             scanner.nextLine();  // 입력 버퍼 비우기
 
             switch (choice) {
@@ -82,20 +82,21 @@ public class Order {
     }
 
     /**
-     * 관리자용 주문 생성
+     * 관리자용 주문 생성 (매개변수를 갖는 동적 쿼리 - 입력 받기)
      */
     private void adminOrderCreation() {
-        System.out.print("\n====Admin Order Creation====\n");
-        System.out.print("Enter reservation ID: ");
-        int reservationId = scanner.nextInt();
-        scanner.nextLine();
+        System.out.print("\n----Admin Order Creation----\n");
         
         System.out.print("Enter restaurant ID: ");
-        int restaurantId = scanner.nextInt();
+        int restaurantId = scanner.nextInt(); // 입력 받기
+        scanner.nextLine();
+        
+        System.out.print("Enter reservation ID: ");
+        int reservationId = scanner.nextInt(); // 입력 받기
         scanner.nextLine();
 
         System.out.print("Enter menu ID: ");
-        int menuId = scanner.nextInt();
+        int menuId = scanner.nextInt(); // 입력 받기
         scanner.nextLine();
 
         // 현재 시간을 order_time으로 설정
@@ -118,19 +119,19 @@ public class Order {
     }
 
     /**
-     * 관리자용 주문 수정/삭제
+     * 관리자용 주문 수정/삭제 (매개변수를 갖는 동적 쿼리 - 입력 받기)
      */
     private void adminOrderModifyOrDelete() {
-        System.out.print("\n====Admin Order Modify or Delete====\n");
+        System.out.print("\n----Admin Order Modify or Delete----\n");
         System.out.print("Enter order ID: ");
-        int orderId = scanner.nextInt();
+        int orderId = scanner.nextInt(); // 입력 받기
         scanner.nextLine();
 
-        System.out.print("\n====Select Option====\n");
+        System.out.print("\n----Select Option----\n");
         System.out.println("1. Modify Order");
         System.out.println("2. Delete Order");
         System.out.print("Enter your choice: ");
-        int choice = scanner.nextInt();
+        int choice = scanner.nextInt(); // 입력 받기
         scanner.nextLine();
 
         if (choice == 1) {
@@ -143,12 +144,12 @@ public class Order {
     }
 
     /**
-     * 관리자용 주문 확인
+     * 관리자용 주문 확인 (SELECT문 활용)
      */
     private void adminOrderConfirmation() {
-        System.out.print("\n====Admin Order Confirmation====\n");
+        System.out.print("\n----Admin Order Confirmation----\n");
         System.out.print("Enter order ID: ");
-        int orderId = scanner.nextInt();
+        int orderId = scanner.nextInt(); // 입력 받기
         scanner.nextLine();
 
         try {
@@ -158,11 +159,12 @@ public class Order {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                System.out.print("\n====Order Info====\n");
-                System.out.println("Order ID: " + rs.getInt("order_id"));
-                System.out.println("Reservation ID: " + rs.getInt("reservation_id"));
-                System.out.println("Menu ID: " + rs.getInt("menu_id"));
+                System.out.print("\n----Order Info----\n");
                 System.out.println("Restaurant ID: " + rs.getInt("restaurant_id"));
+                System.out.println("Reservation ID: " + rs.getInt("reservation_id"));
+                System.out.println("Order ID: " + rs.getInt("order_id"));
+                System.out.println("Menu ID: " + rs.getInt("menu_id"));
+                System.out.println("Menu Name: " + rs.getString("menu_name"));
                 System.out.println("Order Time: " + rs.getString("order_time"));
             } else {
                 System.out.println("Order not found.");
@@ -177,24 +179,24 @@ public class Order {
     }
 
     /**
-     * 고객용 주문 생성
+     * 고객용 주문 생성 (SELECT, INSERT문 활용)
      */
     private void customerOrderCreation() {
-        System.out.print("\n====Customer Order Creation====\n");
+        System.out.print("\n----Customer Order Creation----\n");
         System.out.print("Enter your customer ID: ");
-        int customerId = scanner.nextInt();
+        int customerId = scanner.nextInt(); // 입력 받기
         scanner.nextLine();
 
         System.out.print("Enter reservation ID: ");
-        int reservationId = scanner.nextInt();
+        int reservationId = scanner.nextInt(); // 입력 받기
         scanner.nextLine();
         
         System.out.print("Enter restaurant ID: ");
-        int restaurantId = scanner.nextInt();
+        int restaurantId = scanner.nextInt(); // 입력 받기
         scanner.nextLine();
 
         System.out.print("Enter menu ID: ");
-        int menuId = scanner.nextInt();
+        int menuId = scanner.nextInt(); // 입력 받기
         scanner.nextLine();
 
         // 현재 시간을 order_time으로 설정
@@ -231,16 +233,16 @@ public class Order {
     }
 
     /**
-     * 고객용 주문 수정/삭제 요청
+     * 고객용 주문 수정/삭제 요청 (조인 활용, SELECT문 활용)
      */
     private void customerOrderModifyOrDelete() {
-        System.out.print("\n====Customer Order Modify or Delete====\n");
+        System.out.print("\n----Customer Order Modify or Delete----\n");
         System.out.print("Enter your customer ID: ");
-        int customerId = scanner.nextInt();
+        int customerId = scanner.nextInt(); // 입력 받기
         scanner.nextLine();
 
         System.out.print("Enter order ID: ");
-        int orderId = scanner.nextInt();
+        int orderId = scanner.nextInt(); // 입력 받기
         scanner.nextLine();
 
         try {
@@ -252,11 +254,11 @@ public class Order {
             ResultSet rs = verifyPstmt.executeQuery();
 
             if (rs.next()) {
-                System.out.print("\n====Select Option====\n");
+                System.out.print("\n----Select Option----\n");
                 System.out.println("1. Modify Order");
                 System.out.println("2. Delete Order");
                 System.out.print("Enter your choice: ");
-                int choice = scanner.nextInt();
+                int choice = scanner.nextInt(); // 입력 받기
                 scanner.nextLine();
 
                 if (choice == 1) {
@@ -279,31 +281,30 @@ public class Order {
     }
 
     /**
-     * 고객용 주문 확인
+     * 고객용 주문 확인 (조인 활용, SELECT문 활용)
      */
     private void customerOrderConfirmation() {
-        System.out.print("\n====Customer Order Confirmation====\n");
-        System.out.print("Enter your customer ID: ");
-        int customerId = scanner.nextInt();
-        scanner.nextLine();
+        System.out.print("\n----Customer Order Confirmation----\n");
+        System.out.print("Enter your customer name: ");
+        String customerName = scanner.nextLine(); // 입력 받기
 
         System.out.print("Enter restaurant ID: ");
-        int restaurantId = scanner.nextInt();
+        int restaurantId = scanner.nextInt(); // 입력 받기
         scanner.nextLine();
 
         try {
-            String sql = "SELECT o.* FROM DB2024_ORDER o JOIN DB2024_RESERVATION r ON o.reservation_id = r.reservation_id WHERE r.customer_id = ? AND o.restaurant_id = ?";
+            String sql = "SELECT o.* FROM DB2024_ORDER o JOIN DB2024_RESERVATION r ON o.reservation_id = r.reservation_id JOIN DB2024_CUSTOMER c ON r.customer_id = c.customer_id WHERE c.customer_name = ? AND o.restaurant_id = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, customerId);
+            pstmt.setString(1, customerName);
             pstmt.setInt(2, restaurantId);
             ResultSet rs = pstmt.executeQuery();
 
-            System.out.print("\n====Order List====\n");
+            System.out.print("\n----Order List----\n");
             while (rs.next()) {
-                System.out.println("Order ID: " + rs.getInt("order_id"));
-                System.out.println("Reservation ID: " + rs.getInt("reservation_id"));
-                System.out.println("Menu ID: " + rs.getInt("menu_id"));
                 System.out.println("Restaurant ID: " + rs.getInt("restaurant_id"));
+                System.out.println("Reservation ID: " + rs.getInt("reservation_id"));
+                System.out.println("Order ID: " + rs.getInt("order_id"));
+                System.out.println("Menu ID: " + rs.getInt("menu_id"));
                 System.out.println("Order Time: " + rs.getString("order_time"));
                 System.out.println("------------------------");
             }
@@ -317,16 +318,16 @@ public class Order {
     }
 
     /**
-     * 특정 식당과 예약번호로 주문 검색 (인덱스 활용)
+     * 특정 식당과 예약번호로 주문 검색 (인덱스 활용, SELECT문 활용)
      */
     private void searchOrdersByRestaurantAndReservation() {
-        System.out.print("\n====Search Using Index====\n");
+        System.out.print("\n----Search Using Index----\n");
         System.out.print("Enter restaurant ID: ");
-        int restaurantId = scanner.nextInt();
+        int restaurantId = scanner.nextInt(); // 입력 받기
         scanner.nextLine();
 
         System.out.print("Enter reservation ID: ");
-        int reservationId = scanner.nextInt();
+        int reservationId = scanner.nextInt(); // 입력 받기
         scanner.nextLine();
 
         try {
@@ -338,11 +339,11 @@ public class Order {
 
             while (rs.next()) {
                 System.out.println("\n------------------------");
-                System.out.print("\n====Order Info====\n");
-                System.out.println("Order ID: " + rs.getInt("order_id"));
-                System.out.println("Reservation ID: " + rs.getInt("reservation_id"));
-                System.out.println("Menu ID: " + rs.getInt("menu_id"));
+                System.out.print("\n----Order Info----\n");
                 System.out.println("Restaurant ID: " + rs.getInt("restaurant_id"));
+                System.out.println("Reservation ID: " + rs.getInt("reservation_id"));
+                System.out.println("Order ID: " + rs.getInt("order_id"));
+                System.out.println("Menu ID: " + rs.getInt("menu_id"));
                 System.out.println("Order Time: " + rs.getString("order_time"));
             }
             System.out.println("\n------------------------");
@@ -356,12 +357,12 @@ public class Order {
     }
 
     /**
-     * 주문 수정
+     * 주문 수정 (UPDATE문 활용)
      */
     private void modifyOrder(int orderId) {
-        System.out.print("\n====Order Modification====\n");
+        System.out.print("\n----Order Modification----n");
         System.out.print("Enter new menu ID: ");
-        int newMenuId = scanner.nextInt();
+        int newMenuId = scanner.nextInt(); // 입력 받기
         scanner.nextLine();
         
         // 현재 시간을 order_time으로 설정
@@ -383,7 +384,7 @@ public class Order {
     }
 
     /**
-     * 주문 삭제
+     * 주문 삭제 (DELETE문 활용)
      */
     private void deleteOrder(int orderId) {
         try {
