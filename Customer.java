@@ -237,8 +237,8 @@ public class Customer {
             		pstmt.setInt(1, customer_phone);
             		ResultSet rs = pstmt.executeQuery();
 
-           	while (rs.next())
-                	System.out.print(”\n—--—Customer Info----\n");
+           	while (rs.next()) {
+                	System.out.print("\n—--—Customer Info----\n");
                 	System.out.println("Customer ID: " + rs.getInt("customer_id"));
                 	System.out.println("Customer Name: " + rs.getInt("customer_name"));
                 	System.out.println("Customer Birthday: " + rs.getInt("birthday"));
@@ -249,9 +249,8 @@ public class Customer {
             	rs.close();
             	pstmt.close();
         	} catch (SQLException e) {
-            	System.out.println("Error searching customer phone number:”);
+            	System.out.println("Error searching customer phone number:");
             	e.printStackTrace();
         	}
     	}
-
 }
