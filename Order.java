@@ -80,7 +80,7 @@ public class Order {
                 case 4 -> searchOrdersByRestaurantAndReservation(); // 인덱스 활용
                 case 5 -> searchOrdersByLocationAndCategory(); // 중첩 활용
                 case 6 -> running = false;
-                default -> System.out.println("Invalid choice. Please enter a number between 1 and 5.");
+                default -> System.out.println("Invalid choice. Please enter a number between 1 and 6.");
             }
         }
     }
@@ -111,12 +111,17 @@ public class Order {
 
             // 주문 생성
             String orderSql = "INSERT INTO DB2024_ORDER (reservation_id, menu_id, restaurant_id, order_time) VALUES (?, ?, ?, ?)";
-            PreparedStatement orderPstmt = conn.prepareStatement(orderSql);
+            PreparedStatement orderPstmt = conn.prepareStatement(orderSql, PreparedStatement.RETURN_GENERATED_KEYS);
             orderPstmt.setInt(1, reservationId);
             orderPstmt.setInt(2, menuId);
             orderPstmt.setInt(3, restaurantId);
             orderPstmt.setString(4, orderTime);
             orderPstmt.executeUpdate();
+            ResultSet generatedKeys = orderPstmt.getGeneratedKeys();
+            int orderId = -1;
+            if (generatedKeys.next()) {
+                orderId = generatedKeys.getInt(1);
+            }
 
             // 메뉴 재고 확인 및 감소
             String stockSql = "SELECT stock FROM DB2024_MENU WHERE menu_id = ?";
@@ -149,6 +154,9 @@ public class Order {
 
             conn.commit(); // 트랜잭션 커밋
             System.out.println("Order created successfully.");
+
+            // 방금 생성된 주문 정보 출력
+            printOrderInfo(orderId);
         } catch (SQLException e) {
             try {
                 conn.rollback(); // 트랜잭션 롤백
@@ -225,7 +233,7 @@ public class Order {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * 고객용 주문 생성 (SELECT, INSERT, UPDATE문 활용, 트랜잭션 활용)
      */
@@ -263,12 +271,17 @@ public class Order {
             if (rs.next()) {
                 // 주문 생성
                 String orderSql = "INSERT INTO DB2024_ORDER (reservation_id, menu_id, restaurant_id, order_time) VALUES (?, ?, ?, ?)";
-                PreparedStatement orderPstmt = conn.prepareStatement(orderSql);
+                PreparedStatement orderPstmt = conn.prepareStatement(orderSql, PreparedStatement.RETURN_GENERATED_KEYS);
                 orderPstmt.setInt(1, reservationId);
                 orderPstmt.setInt(2, menuId);
                 orderPstmt.setInt(3, restaurantId);
                 orderPstmt.setString(4, orderTime);
                 orderPstmt.executeUpdate();
+                ResultSet generatedKeys = orderPstmt.getGeneratedKeys();
+                int orderId = -1;
+                if (generatedKeys.next()) {
+                    orderId = generatedKeys.getInt(1);
+                }
 
                 // 메뉴 재고 확인 및 감소
                 String stockSql = "SELECT stock FROM DB2024_MENU WHERE menu_id = ?";
@@ -309,6 +322,9 @@ public class Order {
 
             conn.commit(); // 트랜잭션 커밋
             System.out.println("Order created successfully.");
+
+            // 방금 생성된 주문 정보 출력
+            printOrderInfo(orderId);
         } catch (SQLException e) {
             try {
                 conn.rollback(); // 트랜잭션 롤백
@@ -325,7 +341,7 @@ public class Order {
             }
         }
     }
-
+    
     /**
      * 고객용 주문 수정/삭제 요청 (SELECT문 활용, 조인 활용)
      */
@@ -533,6 +549,35 @@ public class Order {
             pstmt.close();
         } catch (SQLException e) {
             System.out.println("Error deleting order:");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 방금 생성된 주문 정보를 출력하는 메서드
+     */
+    private void printOrderInfo(int orderId) {
+        try {
+            String sql = "SELECT o.*, m.menu_name FROM DB2024_ORDER o JOIN DB2024_MENU m ON o.menu_id = m.menu_id WHERE o.order_id = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, orderId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                System.out.print("\n----Successfully Created Order----\n");
+                System.out.println("Restaurant ID: " + rs.getInt("restaurant_id"));
+                System.out.println("Reservation ID: " + rs.getInt("reservation_id"));
+                System.out.println("Order ID: " + rs.getInt("order_id"));
+                System.out.println("Menu ID: " + rs.getInt("menu_id"));
+                System.out.println("Menu Name: " + rs.getString("menu_name"));
+                System.out.println("Order Time: " + rs.getString("order_time"));
+                System.out.println("------------------------");
+            }
+
+            rs.close();
+            pstmt.close();
+        } catch (SQLException e) {
+            System.out.println("Error retrieving created order info:");
             e.printStackTrace();
         }
     }
