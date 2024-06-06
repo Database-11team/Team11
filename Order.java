@@ -1,6 +1,6 @@
 //TestMain.java 활용해서 실행함
 //각 함수들 관리자용/고객용 구분 완료
-//인덱스 활용예제 포함 완료
+//입력 받는 매개변수 동적쿼리, 인덱스, 조인, SELECT, INSERT, UPDATE, DELETE문 활용된 부분 표시 완료
 
 package DB2024Team11;
 
