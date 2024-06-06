@@ -110,7 +110,7 @@ public class Main {
                 }
                 case 5 -> {
                     Reservation reservation = new Reservation(conn, scanner);
-                    reservation.handleCustomerReservation();
+                    reservation.handleCustomerOperations();
                 }
                 case 6 -> {
                     Payment payment = new Payment(conn, scanner);
@@ -157,7 +157,7 @@ public class Main {
                 }
                 case 5 -> {
                     Reservation reservation = new Reservation(conn, scanner);
-                    reservation.handleAdminReservation();
+                    reservation.handleAdminOperations();
                 }
                 case 6 -> {
                     Payment payment = new Payment(conn, scanner);

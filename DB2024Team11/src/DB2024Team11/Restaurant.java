@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.Scanner;
 
 /**
- * Restaurant 클래스는 레스토랑 예약을 관리하는 기능을 제공합니다.
+ * Restaurant 클래스는 레스토랑 예약을 관리하는 기능
  */
 public class Restaurant {
     private final Connection conn;
@@ -50,6 +50,9 @@ public class Restaurant {
             }
         }
     }
+    /*
+    *  고객 사용자에 대한 메뉴 제공
+    * */
     public void handleCustomerOperations() {
         boolean running = true;
         while (running) {
@@ -71,7 +74,7 @@ public class Restaurant {
         }
     }
     /**
-     * 레스토랑 정보를 조회합니다.
+     * 레스토랑 정보를 조회
      */
     private void getRestaurant() {
         System.out.print("Enter restaurant ID to view information: ");
@@ -80,7 +83,9 @@ public class Restaurant {
 
         getRestaurantInfo(restaurantId);
     }
-
+/*
+*   레스토랑 정보를 ID를 통해서 조회 한다.
+* */
     private void getRestaurantInfo(int restaurantId) {
         String query = "SELECT * FROM DB2024_RESTAURANT WHERE restaurant_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -113,7 +118,8 @@ public class Restaurant {
 
 
     /**
-     * 레스토랑 정보를 생성합니다.
+     * 레스토랑 정보를 생성한다.
+     * write중 에러 처리를 위해 트랜잭션 사용 (autocommit ->false)
      */
     private void createRestaurant() {
         System.out.print("Enter restaurant name: ");
@@ -143,7 +149,7 @@ public class Restaurant {
         String query = "INSERT INTO DB2024_RESTAURANT (restaurant_name, restaurant_category, location, contact, opening_hours, breaktime, lastorder, closed_day, table_num, availability) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
-            conn.setAutoCommit(false); // Disable auto-commit
+            conn.setAutoCommit(false);
 
             try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 stmt.setString(1, name.isEmpty() ? null : name);
@@ -167,7 +173,7 @@ public class Restaurant {
                         }
                     }
                 }
-                conn.commit(); // Commit the transaction
+                conn.commit();
             } catch (SQLException e) {
                 e.printStackTrace();
                 System.out.println("Rolling back data here....");
@@ -184,7 +190,7 @@ public class Restaurant {
         } finally {
             try {
                 if (conn != null) {
-                    conn.setAutoCommit(true); // Enable auto-commit back
+                    conn.setAutoCommit(true);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -193,7 +199,8 @@ public class Restaurant {
     }
 
     /**
-     * 레스토랑 정보를 수정
+     * 레스토랑 정보를 수정한다.
+     * 이떄 수정을 원하지 않는 데이터의 경우에는 넘어갈 수 있음
      */
     private void updateRestaurant() {
         System.out.print("\nEnter restaurant ID to update: ");
@@ -275,7 +282,7 @@ public class Restaurant {
 
 
     /**
-     * 레스토랑 정보를 삭제합니다.
+     * 레스토랑 정보를 삭제
      */
     private void deleteRestaurantInfo() {
         System.out.print("Enter restaurant ID to delete: ");
@@ -298,7 +305,7 @@ public class Restaurant {
     }
 // ----------------------------------------- SEARCH ---------------------------------------------------
     /**
-     * 특정 속성으로 레스토랑을 검색합니다.
+     * 레스토랑을 검색
      */
     private void searchRestaurant() {
         boolean searchRunning = true;
@@ -313,7 +320,7 @@ public class Restaurant {
 
             System.out.print("Enter your choice: ");
             int searchChoice = scanner.nextInt();
-            scanner.nextLine(); // 개행
+            scanner.nextLine();
 
             switch (searchChoice) {
                 case 1 -> searchByName();
@@ -326,6 +333,9 @@ public class Restaurant {
             }
         }
     }
+    /*
+    * 레스토랑 이름으로 검색
+    * */
     private void searchByName() {
         System.out.print("Enter restaurant name to search: ");
         String keyword = scanner.nextLine();
@@ -344,7 +354,7 @@ public class Restaurant {
         String query = queryBuilder.toString();
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             for (int i = 0; i < tokens.length; i++) {
-                stmt.setString(i + 1, "%" + tokens[i] + "%"); // Add wildcards for partial search
+                stmt.setString(i + 1, "%" + tokens[i] + "%");
             }
             ResultSet rs = stmt.executeQuery();
             processSearchResults(rs);
@@ -352,20 +362,25 @@ public class Restaurant {
             e.printStackTrace();
         }
     }
+    /*
+    * 레스토랑 위치로 검색
+    * */
     private void searchByLocation() {
         System.out.print("Enter location to search: ");
         String location = scanner.nextLine();
 
         String query = "SELECT * FROM DB2024_RESTAURANT WHERE location LIKE ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, "%" + location + "%"); // Add wildcards for partial search
+            stmt.setString(1, "%" + location + "%");
             ResultSet rs = stmt.executeQuery();
             processSearchResults(rs);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
+    /*
+    * 인덱스(Location, name) 사용하여 Restaurant 검색
+    * */
     private void searchByNameAndLocation() {
         System.out.print("Enter restaurant name to search: ");
         String name = scanner.nextLine();
@@ -373,7 +388,7 @@ public class Restaurant {
         System.out.print("Enter location to search: ");
         String location = scanner.nextLine();
 
-        String query = "SELECT * FROM DB2024_RESTAURANT WHERE restaurant_name LIKE ? AND location LIKE ?";
+        String query = "SELECT * FROM DB2024_RESTAURANT WHERE restaurant_name = ? AND location = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, "%" + name + "%");
             stmt.setString(2, "%" + location + "%");
@@ -383,7 +398,9 @@ public class Restaurant {
             e.printStackTrace();
         }
     }
-
+    /*
+    * 레스토랑 카테고리로 검색
+    * */
     private void searchByCategory() {
         System.out.print("Enter restaurant category to search: ");
         String category = scanner.nextLine();
@@ -392,14 +409,14 @@ public class Restaurant {
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, category);
             ResultSet rs = stmt.executeQuery();
-
-            // Display search results
             processSearchResults(rs);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
+    /*
+    *  JOIN 사용, date
+    * */
     private void searchByAvailDate() {
         System.out.print("Enter date to search for availability (YYYY-MM-DD): ");
         String targetDate = scanner.nextLine();

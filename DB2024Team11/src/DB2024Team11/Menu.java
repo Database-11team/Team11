@@ -407,17 +407,17 @@ public class Menu {
         }
     }
     private void searchMenuByRestaurant(){
-        System.out.print("Enter Restaurant ID (or press Enter for no ID): ");
-        System.out.print("Enter Restaurant Name (or press Enter for no ID): ");
-        System.out.print("Enter Restaurant Location (or press Enter for no ID): ");
-        String restaurantName = scanner.nextLine();
+        System.out.print("Enter Restaurant ID: ");
+
+        int restaurantId = scanner.nextInt();
+        scanner.nextLine(); // 개행 처리
 
         String query = "SELECT M.menu_id, M.restaurant_id, M.menu_category, M.menu_name, M.price, M.allergic_included, M.stock, M.description, R.restaurant_name, R.location " +
                 "FROM DB2024_MENU M " +
                 "JOIN DB2024_RESTAURANT R ON M.restaurant_id = R.restaurant_id " +
-                "WHERE R.restaurant_name LIKE ?";
+                "WHERE M.restaurant_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, "%" + restaurantName + "%");
+            stmt.setInt(1, restaurantId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 System.out.println("\n-----------------------------------------------------");
@@ -438,6 +438,7 @@ public class Menu {
             e.printStackTrace();
         }
     }
+
     private void processSearchResults(ResultSet rs) throws SQLException {
         while (rs.next()) {
             System.out.println("-----------------------------------------------------");
