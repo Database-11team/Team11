@@ -40,7 +40,7 @@ public class Order {
             System.out.println("\n====[Admin Order Menu]====");
             System.out.println("1. Create New Order");
             System.out.println("2. Modify/Delete Order");
-            System.out.println("3. Order Confirmation");
+            System.out.println("3. Order Detail");
             System.out.println("4. Search Orders by Restaurant and Reservation ID");
             System.out.println("5. Search Orders by Location and Category");
             System.out.println("6. Exit");
@@ -66,7 +66,7 @@ public class Order {
             System.out.println("\n====[Customer Order Menu]====");
             System.out.println("1. Create New Order");
             System.out.println("2. Request Order Modification/Deletion");
-            System.out.println("3. Order Confirmation");
+            System.out.println("3. Order Detail");
             System.out.println("4. Search Orders by Restaurant and Reservation ID");
             System.out.println("5. Search Orders by Location and Category");
             System.out.println("6. Exit");
@@ -196,7 +196,7 @@ public class Order {
      * 관리자용 주문 확인 (SELECT문 활용)
      */
     private void adminOrderConfirmation() {
-        System.out.print("\n----Admin Order Confirmation----\n");
+        System.out.print("\n----Admin Order Detail----\n");
         System.out.print("Enter order ID: ");
         int orderId = scanner.nextInt(); // 입력 받기
         scanner.nextLine();
@@ -379,7 +379,7 @@ public class Order {
      * 고객용 주문 확인 (SELECT문 활용, 조인 활용)
      */
     private void customerOrderConfirmation() {
-        System.out.print("\n----Customer Order Confirmation----\n");
+        System.out.print("\n----Customer Order Detail----\n");
         System.out.print("Enter your customer name: ");
         String customerName = scanner.nextLine(); // 입력 받기
 

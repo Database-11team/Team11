@@ -315,8 +315,7 @@ public class Restaurant {
             System.out.println("2. Search by Location");
             System.out.println("3. Search by Name & Location");
             System.out.println("4. Search by Category");
-            System.out.println("5. Search by Available Date");
-            System.out.println("6. Back");
+            System.out.println("5. Back");
 
             System.out.print("Enter your choice: ");
             int searchChoice = scanner.nextInt();
@@ -327,8 +326,7 @@ public class Restaurant {
                 case 2 -> searchByLocation();
                 case 3 -> searchByNameAndLocation();
                 case 4 -> searchByCategory();
-                case 5 -> searchByAvailDate();
-                case 6 -> searchRunning = false;
+                case 5 -> searchRunning = false;
                 default -> System.out.println("Invalid choice. Please enter a number between 1 and 4.");
             }
         }
@@ -385,13 +383,13 @@ public class Restaurant {
         System.out.print("Enter restaurant name to search: ");
         String name = scanner.nextLine();
 
-        System.out.print("Enter location to search: ");
+        System.out.print("Enter location to search(구): ");
         String location = scanner.nextLine();
 
-        String query = "SELECT * FROM DB2024_RESTAURANT WHERE restaurant_name = ? AND location = ?";
+        String query = "SELECT * FROM DB2024_RESTAURANT WHERE restaurant_name = ? AND location Like ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, "%" + name + "%");
-            stmt.setString(2, "%" + location + "%");
+            stmt.setString(1, name);
+            stmt.setString(2, location + "%");
             ResultSet rs = stmt.executeQuery();
             processSearchResults(rs);
         } catch (SQLException e) {
@@ -414,31 +412,6 @@ public class Restaurant {
             e.printStackTrace();
         }
     }
-    /*
-    *  JOIN 사용, date
-    * */
-    private void searchByAvailDate() {
-        System.out.print("Enter date to search for availability (YYYY-MM-DD): ");
-        String targetDate = scanner.nextLine();
-
-        String query = "SELECT r.restaurant_id, r.restaurant_name, r.location, r.category, r.opening_hours, r.closed_day \n" +
-                "FROM DB2024_RESTAURANT r \n" +
-                "JOIN DB2024_TABLE t ON r.restaurant_id = t.restaurant_id \n" +
-                "LEFT JOIN DB2024_RESERVATION res ON t.table_id = res.table_id \n" +
-                "AND res.reservation_date = ? \n" +
-                "WHERE res.reservation_id IS NULL OR res.reservation_date != ?";
-
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, targetDate);
-            stmt.setString(2, targetDate);
-            ResultSet rs = stmt.executeQuery();
-
-            processSearchResults(rs);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     private void processSearchResults(ResultSet rs) throws SQLException {
         while (rs.next()) {
