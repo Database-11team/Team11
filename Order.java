@@ -1,6 +1,6 @@
 //TestMain.java 활용해서 실행함
 //각 함수들 관리자용/고객용 구분 완료
-//입력 받는 매개변수 동적쿼리, 인덱스, 조인, SELECT, INSERT, UPDATE, DELETE문 활용된 부분 표시 완료
+//입력 받는 매개변수 동적쿼리, 중첩, 인덱스, 조인, 트랜잭션, SELECT, INSERT, UPDATE, DELETE문 활용된 부분 표시 완료
 
 package DB2024Team11;
 
@@ -41,7 +41,8 @@ public class Order {
             System.out.println("2. Modify/Delete Order");
             System.out.println("3. Order Confirmation");
             System.out.println("4. Search Orders by Restaurant and Reservation ID");
-            System.out.println("5. Exit");
+            System.out.println("5. Search Orders by Location and Category");
+            System.out.println("6. Exit");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt(); // 입력 받기
             scanner.nextLine();  // 입력 버퍼 비우기
@@ -51,8 +52,9 @@ public class Order {
                 case 2 -> adminOrderModifyOrDelete();
                 case 3 -> adminOrderConfirmation();
                 case 4 -> searchOrdersByRestaurantAndReservation(); // 인덱스 활용
-                case 5 -> running = false;
-                default -> System.out.println("Invalid choice. Please enter a number between 1 and 5.");
+                case 5 -> searchOrdersByLocationAndCategory(); // 중첩 활용
+                case 6 -> running = false;
+                default -> System.out.println("Invalid choice. Please enter a number between 1 and 6.");
             }
         }
     }
@@ -65,24 +67,26 @@ public class Order {
             System.out.println("2. Request Order Modification/Deletion");
             System.out.println("3. Order Confirmation");
             System.out.println("4. Search Orders by Restaurant and Reservation ID");
-            System.out.println("5. Exit");
+            System.out.println("5. Search Orders by Location and Category");
+            System.out.println("6. Exit");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt(); // 입력 받기
             scanner.nextLine();  // 입력 버퍼 비우기
 
             switch (choice) {
-                case 1 -> customerOrderCreation();
+                case 1 -> customerOrderCreation(); //INSERT, SELECT, UPDATE, 트랜잭션 활용
                 case 2 -> customerOrderModifyOrDelete();
                 case 3 -> customerOrderConfirmation();
                 case 4 -> searchOrdersByRestaurantAndReservation(); // 인덱스 활용
-                case 5 -> running = false;
+                case 5 -> searchOrdersByLocationAndCategory(); // 중첩 활용
+                case 6 -> running = false;
                 default -> System.out.println("Invalid choice. Please enter a number between 1 and 5.");
             }
         }
     }
 
     /**
-     * 관리자용 주문 생성 (매개변수를 갖는 동적 쿼리 - 입력 받기)
+     * 관리자용 주문 생성 (INSERT, SELECT, UPDATE문 활용, 트랜잭션 활용)
      */
     private void adminOrderCreation() {
         System.out.print("\n----Admin Order Creation----\n");
@@ -103,18 +107,62 @@ public class Order {
         String orderTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         try {
-            String sql = "INSERT INTO DB2024_ORDER (reservation_id, menu_id, restaurant_id, order_time) VALUES (?, ?, ?, ?)";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, reservationId);
-            pstmt.setInt(2, menuId);
-            pstmt.setInt(3, restaurantId);
-            pstmt.setString(4, orderTime);
-            pstmt.executeUpdate();
+            conn.setAutoCommit(false); // 트랜잭션 시작
+
+            // 주문 생성
+            String orderSql = "INSERT INTO DB2024_ORDER (reservation_id, menu_id, restaurant_id, order_time) VALUES (?, ?, ?, ?)";
+            PreparedStatement orderPstmt = conn.prepareStatement(orderSql);
+            orderPstmt.setInt(1, reservationId);
+            orderPstmt.setInt(2, menuId);
+            orderPstmt.setInt(3, restaurantId);
+            orderPstmt.setString(4, orderTime);
+            orderPstmt.executeUpdate();
+
+            // 메뉴 재고 확인 및 감소
+            String stockSql = "SELECT stock FROM DB2024_MENU WHERE menu_id = ?";
+            PreparedStatement stockPstmt = conn.prepareStatement(stockSql);
+            stockPstmt.setInt(1, menuId);
+            ResultSet rs = stockPstmt.executeQuery();
+
+            if (rs.next()) {
+                int stock = rs.getInt("stock");
+                if (stock >= 1) {
+                    String updateStockSql = "UPDATE DB2024_MENU SET stock = stock - 1 WHERE menu_id = ?";
+                    PreparedStatement updateStockPstmt = conn.prepareStatement(updateStockSql);
+                    updateStockPstmt.setInt(1, menuId);
+                    updateStockPstmt.executeUpdate();
+                    updateStockPstmt.close();
+                } else {
+                    conn.rollback();
+                    System.out.println("Stock is insufficient.");
+                    return;
+                }
+            } else {
+                conn.rollback();
+                System.out.println("Menu not found.");
+                return;
+            }
+
+            rs.close();
+            stockPstmt.close();
+            orderPstmt.close();
+
+            conn.commit(); // 트랜잭션 커밋
             System.out.println("Order created successfully.");
-            pstmt.close();
         } catch (SQLException e) {
+            try {
+                conn.rollback(); // 트랜잭션 롤백
+            } catch (SQLException rollbackException) {
+                rollbackException.printStackTrace();
+            }
             System.out.println("Error creating order:");
             e.printStackTrace();
+        } finally {
+            try {
+                conn.setAutoCommit(true); // 자동 커밋 모드로 전환
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -177,9 +225,9 @@ public class Order {
             e.printStackTrace();
         }
     }
-
+    
     /**
-     * 고객용 주문 생성 (SELECT, INSERT문 활용)
+     * 고객용 주문 생성 (SELECT, INSERT, UPDATE문 활용, 트랜잭션 활용)
      */
     private void customerOrderCreation() {
         System.out.print("\n----Customer Order Creation----\n");
@@ -203,7 +251,9 @@ public class Order {
         String orderTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         try {
-            // Verify if the reservation belongs to the customer
+            conn.setAutoCommit(false); // 트랜잭션 시작
+
+            // 예약이 고객의 예약인지 확인
             String verifySql = "SELECT * FROM DB2024_RESERVATION WHERE reservation_id = ? AND customer_id = ?";
             PreparedStatement verifyPstmt = conn.prepareStatement(verifySql);
             verifyPstmt.setInt(1, reservationId);
@@ -211,29 +261,73 @@ public class Order {
             ResultSet rs = verifyPstmt.executeQuery();
 
             if (rs.next()) {
-                String sql = "INSERT INTO DB2024_ORDER (reservation_id, menu_id, restaurant_id, order_time) VALUES (?, ?, ?, ?)";
-                PreparedStatement pstmt = conn.prepareStatement(sql);
-                pstmt.setInt(1, reservationId);
-                pstmt.setInt(2, menuId);
-                pstmt.setInt(3, restaurantId);
-                pstmt.setString(4, orderTime);
-                pstmt.executeUpdate();
-                System.out.println("Order created successfully.");
-                pstmt.close();
+                // 주문 생성
+                String orderSql = "INSERT INTO DB2024_ORDER (reservation_id, menu_id, restaurant_id, order_time) VALUES (?, ?, ?, ?)";
+                PreparedStatement orderPstmt = conn.prepareStatement(orderSql);
+                orderPstmt.setInt(1, reservationId);
+                orderPstmt.setInt(2, menuId);
+                orderPstmt.setInt(3, restaurantId);
+                orderPstmt.setString(4, orderTime);
+                orderPstmt.executeUpdate();
+
+                // 메뉴 재고 확인 및 감소
+                String stockSql = "SELECT stock FROM DB2024_MENU WHERE menu_id = ?";
+                PreparedStatement stockPstmt = conn.prepareStatement(stockSql);
+                stockPstmt.setInt(1, menuId);
+                ResultSet stockRs = stockPstmt.executeQuery();
+
+                if (stockRs.next()) {
+                    int stock = stockRs.getInt("stock");
+                    if (stock >= 1) {
+                        String updateStockSql = "UPDATE DB2024_MENU SET stock = stock - 1 WHERE menu_id = ?";
+                        PreparedStatement updateStockPstmt = conn.prepareStatement(updateStockSql);
+                        updateStockPstmt.setInt(1, menuId);
+                        updateStockPstmt.executeUpdate();
+                        updateStockPstmt.close();
+                    } else {
+                        conn.rollback();
+                        System.out.println("Stock is insufficient.");
+                        return;
+                    }
+                } else {
+                    conn.rollback();
+                    System.out.println("Menu not found.");
+                    return;
+                }
+
+                stockRs.close();
+                stockPstmt.close();
+                orderPstmt.close();
             } else {
+                conn.rollback();
                 System.out.println("Reservation ID does not belong to the customer.");
+                return;
             }
 
             rs.close();
             verifyPstmt.close();
+
+            conn.commit(); // 트랜잭션 커밋
+            System.out.println("Order created successfully.");
         } catch (SQLException e) {
+            try {
+                conn.rollback(); // 트랜잭션 롤백
+            } catch (SQLException rollbackException) {
+                rollbackException.printStackTrace();
+            }
             System.out.println("Error creating order:");
             e.printStackTrace();
+        } finally {
+            try {
+                conn.setAutoCommit(true); // 자동 커밋 모드로 전환
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     /**
-     * 고객용 주문 수정/삭제 요청 (조인 활용, SELECT문 활용)
+     * 고객용 주문 수정/삭제 요청 (SELECT문 활용, 조인 활용)
      */
     private void customerOrderModifyOrDelete() {
         System.out.print("\n----Customer Order Modify or Delete----\n");
@@ -281,7 +375,7 @@ public class Order {
     }
 
     /**
-     * 고객용 주문 확인 (조인 활용, SELECT문 활용)
+     * 고객용 주문 확인 (SELECT문 활용, 조인 활용)
      */
     private void customerOrderConfirmation() {
         System.out.print("\n----Customer Order Confirmation----\n");
@@ -318,7 +412,7 @@ public class Order {
     }
 
     /**
-     * 특정 식당과 예약번호로 주문 검색 (인덱스 활용, SELECT문 활용)
+     * 특정 식당과 예약번호로 주문 검색 (SELECT문 활용, 인덱스 활용)
      */
     private void searchOrdersByRestaurantAndReservation() {
         System.out.print("\n----Search Using Index----\n");
@@ -357,10 +451,53 @@ public class Order {
     }
 
     /**
+     * 특정 위치와 카테고리의 레스토랑들의 주문 검색 (SELECT문 활용, 중첩 활용)
+     */
+    private void searchOrdersByLocationAndCategory() {
+        System.out.print("\n----Search Orders by Location and Category----\n");
+        System.out.print("Enter location (e.g., 서대문구): ");
+        String location = scanner.nextLine(); // 입력 받기
+
+        System.out.print("Enter category (e.g., 한식): ");
+        String category = scanner.nextLine(); // 입력 받기
+
+        try {
+            // 중첩문 사용
+            String sql = "SELECT o.restaurant_id, o.order_id, r.customer_id, o.order_time " +
+                         "FROM DB2024_ORDER o " +
+                         "JOIN DB2024_RESERVATION r ON o.reservation_id = r.reservation_id " +
+                         "WHERE o.restaurant_id IN (SELECT restaurant_id " +
+                                                   "FROM DB2024_RESTAURANT " +
+                                                   "WHERE location LIKE ? AND restaurant_category LIKE ?) " +
+                         "GROUP BY o.restaurant_id, o.order_id " +
+                         "ORDER BY o.order_time";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, "%" + location + "%");
+            pstmt.setString(2, "%" + category + "%");
+            ResultSet rs = pstmt.executeQuery();
+
+            System.out.print("\n----Order List----\n");
+            while (rs.next()) {
+                System.out.println("Restaurant ID: " + rs.getInt("restaurant_id"));
+                System.out.println("Order ID: " + rs.getInt("order_id"));
+                System.out.println("Customer ID: " + rs.getInt("customer_id"));
+                System.out.println("Order Time: " + rs.getString("order_time"));
+                System.out.println("------------------------");
+            }
+
+            rs.close();
+            pstmt.close();
+        } catch (SQLException e) {
+            System.out.println("Error searching orders by location and category:");
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 주문 수정 (UPDATE문 활용)
      */
     private void modifyOrder(int orderId) {
-        System.out.print("\n----Order Modification----n");
+        System.out.print("\n----Order Modification----\n");
         System.out.print("Enter new menu ID: ");
         int newMenuId = scanner.nextInt(); // 입력 받기
         scanner.nextLine();
