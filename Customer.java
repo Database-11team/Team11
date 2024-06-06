@@ -45,7 +45,7 @@ public class Customer {
 		while(running) {
 			System.out.println("\n==== Admin Menu ====");
 			System.out.println("1. Customer Management");
-			System.out.println("2. View Customer Birthdays (Send Coupon)");
+			System.out.println("2. Search Customer By Phone Number");
 			System.out.println("3. Back");
 
 			System.out.print("Enter your choice: ");
@@ -54,7 +54,7 @@ public class Customer {
 
 			switch (choice) {
 			case 1 -> manageCustomers();
-			case 2 -> viewBirthdays();
+			case 2 -> searchCustomerBirthdayByPhone();
 			default -> System.out.println("Invalid choice. Please enter a number between 1 and 3.");
 			}
 		}
@@ -222,24 +222,36 @@ public class Customer {
 	         e.printStackTrace();
 	     }
 	 }
-	 private void viewBirthdays() {
-		 try {
-			 String sql = "SELECT * FROM DB2024_CUSTOMER WHERE MONTH(birthday) = MONTH(CURDATE()) AND DAY(birthday) = DAY(CURDATE())";
-			 PreparedStatement pstmt = conn.prepareStatement(sql);
-			 ResultSet rs = pstmt.executeQuery();
-			 while (rs.next()) {
-				 System.out.println("Customer ID: " + rs.getInt("customer_id"));
-				 System.out.println("Name: " + rs.getString("customer_name"));
-				 System.out.println("Birthday: " + rs.getDate("birthday"));
-				 System.out.println("Phone: " + rs.getString("phone_number"));
-				 // Logic to send coupon
-				 System.out.println("Coupon sent to " + rs.getString("phone_number"));
-			 }
-			 rs.close();
-			 pstmt.close();
-		 } catch (SQLException e) {
-			 System.out.println("Error retrieving birthday information:");
-			 e.printStackTrace();
-		 }
-	 }
+	/*
+     	* 고객을 전화번호로 검색 (Index 활용)
+     	*/
+	private void searchCustomerByPhoneNumber() {
+        System.out.print("\n----Search Using Index----\n");
+        System.out.print("Enter Customer Phone Number: ");
+        int customer_phone = scanner.nextInt(); // 입력 받기
+        scanner.nextLine();
+
+        try {
+            String sql = "SELECT * FROM DB2024_CUSTOMER WHERE phone_number = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, customer_phone);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next())
+                System.out.print(”\n—--—Customer Info----\n");
+                System.out.println("Customer ID: " + rs.getInt("customer_id"));
+                System.out.println("Customer Name: " + rs.getInt("customer_name"));
+                System.out.println("Customer Birthday: " + rs.getInt("birthday"));
+                System.out.println("Customer Phone Number: " + rs.getInt("menu_id"));
+            }
+            System.out.println("\n------------------------");
+
+            rs.close();
+            pstmt.close();
+        } catch (SQLException e) {
+            System.out.println("Error searching customer phone number:”);
+            e.printStackTrace();
+        }
+    }
+
 }
