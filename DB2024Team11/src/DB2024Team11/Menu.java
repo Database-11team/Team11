@@ -175,7 +175,7 @@ public class Menu {
         System.out.print("Enter menu ID to update information: ");
         int menuId = scanner.nextInt();
         scanner.nextLine(); // 개행
-
+        getMenuInfo(menuId);
         System.out.print("Enter new restaurant ID (leave blank to keep current): ");
         String newRestaurantIdInput = scanner.nextLine();
         Integer newRestaurantId = null; // 초기값은 null로 설정
@@ -189,7 +189,7 @@ public class Menu {
         String newCategory = scanner.nextLine();
         System.out.print("Enter new menu name (leave blank to keep current): ");
         String newName = scanner.nextLine();
-        System.out.print("Enter new price (-1 to keep current): ");
+        System.out.print("Enter new price (leave blank to keep current): ");
         String newPriceInput = scanner.nextLine();
         Integer newPrice = null; // 초기값은 null로 설정
 
@@ -407,17 +407,15 @@ public class Menu {
         }
     }
     private void searchMenuByRestaurant(){
-        System.out.print("Enter Restaurant ID: ");
-
-        int restaurantId = scanner.nextInt();
-        scanner.nextLine(); // 개행 처리
+        System.out.print("Enter Restaurant Name: ");
+        String restaurantName = scanner.nextLine();
 
         String query = "SELECT M.menu_id, M.restaurant_id, M.menu_category, M.menu_name, M.price, M.allergic_included, M.stock, M.description, R.restaurant_name, R.location " +
                 "FROM DB2024_MENU M " +
                 "JOIN DB2024_RESTAURANT R ON M.restaurant_id = R.restaurant_id " +
-                "WHERE M.restaurant_id = ?";
+                "WHERE R.restaurant_name = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, restaurantId);
+            stmt.setString(1, restaurantName);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 System.out.println("\n-----------------------------------------------------");
@@ -433,7 +431,6 @@ public class Menu {
                 System.out.println("Description: " + rs.getString("description"));
                 System.out.println("-----------------------------------------------------");
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -342,12 +342,20 @@ public class Payment {
     }
 
     /**
-     * PAYMENT테이블의 모든 정보 출력
+     * [관리자] 식당 ID를 입력 받아 해당 식당의 모든 결제정보 출력
      */
     private void getAllPayment() {
         try {
-            String sql = "SELECT * FROM DB2024_PAYMENT";
+            System.out.print("\nEnter restaurant ID: ");
+            int restaurant_id = scanner.nextInt();
+            scanner.nextLine();
+
+            String sql = "SELECT * FROM DB2024_PAYMENT P "
+                    + "JOIN DB2024_RESERVATION RV ON P.reservation_id = RV.reservation_id "
+                    + "JOIN DB2024_RESTAURANT RT ON RV.restaurant_id = RT.restaurant_id "
+                    + "WHERE RT.restaurant_id = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, restaurant_id);
             ResultSet rs = pstmt.executeQuery();
 
             System.out.println("\npayment_id  reservation_id\tpayment_date\tpayment_type\t  payment_amount\tcash_receipt_requested");
@@ -361,8 +369,6 @@ public class Payment {
             System.out.println("Error loading payment information:");
             e.printStackTrace();
         }
-
-
     }
 
     /**

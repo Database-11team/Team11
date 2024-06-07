@@ -8,7 +8,7 @@ import java.util.Scanner;
  */
 public class Customer {
     private final Connection conn;
-    private Scanner scanner;
+    private final Scanner scanner;
 
     public Customer(Connection conn, Scanner scanner){
         this.conn = conn;
@@ -23,6 +23,7 @@ public class Customer {
             System.out.println("\n==== Customer Menu ====");
             System.out.println("1. Login");
             System.out.println("2. Register Customer Account");
+            System.out.println("3. Back");
 
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
@@ -45,7 +46,7 @@ public class Customer {
         while(running) {
             System.out.println("\n==== Admin Menu ====");
             System.out.println("1. Customer Management");
-            System.out.println("2. View Customer Birthdays (Send Coupon)");
+            System.out.println("2. Search Customer By Phone Number");
             System.out.println("3. Back");
 
             System.out.print("Enter your choice: ");
@@ -54,12 +55,12 @@ public class Customer {
 
             switch (choice) {
                 case 1 -> manageCustomers();
-                case 2 -> viewBirthdays();
+                case 2 -> searchCustomerByPhoneNumber();
+                case 3 -> running = false;
                 default -> System.out.println("Invalid choice. Please enter a number between 1 and 3.");
             }
         }
     }
-
     /*
      * loginUser 메서드는 고객의 로그인 기능을 제공한다.
      * 고객ID 받고 데이터베이스에서 고객 정보를 조회한다.
@@ -222,24 +223,37 @@ public class Customer {
             e.printStackTrace();
         }
     }
-    private void viewBirthdays() {
+    /*
+     * 고객을 전화번호로 검색 (Index 활용)
+     */
+    private void searchCustomerByPhoneNumber() {
+        System.out.print("\n----Search Using Index----\n");
+        System.out.print("Enter Customer Phone Number (xxx-xxxx-xxxx): ");
+        String phone_number = scanner.nextLine(); // Read input as a string
+
         try {
-            String sql = "SELECT * FROM DB2024_CUSTOMER WHERE MONTH(birthday) = MONTH(CURDATE()) AND DAY(birthday) = DAY(CURDATE())";
+            String sql = "SELECT * FROM DB2024_CUSTOMER WHERE phone_number = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, phone_number); // Use setString to handle string input
             ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
+
+            if (rs.next()) {
+                System.out.print("\n—--—Customer Info----\n");
                 System.out.println("Customer ID: " + rs.getInt("customer_id"));
-                System.out.println("Name: " + rs.getString("customer_name"));
-                System.out.println("Birthday: " + rs.getDate("birthday"));
-                System.out.println("Phone: " + rs.getString("phone_number"));
-                // Logic to send coupon
-                System.out.println("Coupon sent to " + rs.getString("phone_number"));
+                System.out.println("Customer Name: " + rs.getString("customer_name"));
+                System.out.println("Customer Birthday: " + rs.getDate("birthday"));
+                System.out.println("Customer Phone Number: " + rs.getString("phone_number"));
+            } else {
+                System.out.println("No customer found with the given phone number.");
             }
+            System.out.println("\n------------------------");
+
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Error retrieving birthday information:");
+            System.out.println("Error searching customer phone number:");
             e.printStackTrace();
         }
     }
+
 }
