@@ -72,8 +72,9 @@ INSERT INTO DB2024_ORDER (order_id, menu_id, restaurant_id, reservation_id, orde
 (4, 16, 8, 3, '2024-05-19 12:11:36'),
 (5, 19, 8, 3, '2024-05-19 12:11:36'),
 (6, 1, 1, 4, '2024-05-22 13:02:57'),
-(7, 24, 10, 5, '2024-05-24 20:37:08');
-
+(7, 24, 10, 5, '2024-05-24 20:37:08'),
+(8 ,4, 3, 6, '2024-05-30 19:01:00'),
+(9 ,5, 3, 6, '2024-05-30 19:01:00');
 #PAYMENT TABLE 삽입
 INSERT INTO DB2024_PAYMENT (payment_id, reservation_id, payment_date, payment_type, payment_amount, cash_receipt_requested) VALUES
 (1, 1,'2024-05-15 18:22:52', 'card', 20500, NULL),
